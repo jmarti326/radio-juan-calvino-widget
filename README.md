@@ -28,6 +28,29 @@ track info (title, artist, album, artwork) pulled from RadioJar's public API.
 
 ---
 
+## 🎛️ Variants
+
+Two ready-to-embed layouts are included:
+
+| File           | Layout                              | Recommended iframe size |
+|----------------|-------------------------------------|-------------------------|
+| `index.html`   | Full card (large art + controls)    | ~`380–410` × `250`      |
+| `compact.html` | Slim horizontal bar (drop-in for the original 320×134 embed) | `320` × `120` |
+
+Compact embed:
+
+```html
+<iframe
+  src="https://jmarti326.github.io/radio-juan-calvino-widget/compact.html"
+  title="Radio Juan Calvino"
+  width="320" height="120" frameborder="0" scrolling="no" allow="autoplay">
+</iframe>
+```
+
+Both share the same `CONFIG` block and RadioJar stream/metadata logic.
+
+---
+
 ## 🚀 Quick start (embed)
 
 Publish `index.html` (see [Deployment](#-deployment)) and drop this into any page:
@@ -117,7 +140,8 @@ mixed-content warnings when embedded on an HTTPS page.
 
 ```
 radio-juan-calvino-widget/
-├─ index.html                 # the whole widget (HTML + CSS + JS)
+├─ index.html                 # full-card widget (HTML + CSS + JS)
+├─ compact.html               # slim horizontal-bar variant (~320px)
 ├─ embed-example.html         # copy-paste iframe snippets
 ├─ .gitignore
 ├─ .github/workflows/

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Radio Juan Calvino · Compacto</title>
+<meta name="description" content="Reproductor compacto en vivo de Radio Juan Calvino - Iglesia Presbiteriana Reformada del Caribe (OPC)." />
+
+<!-- ==========================================================================
+     Radio Juan Calvino — COMPACT player widget (~320px wide, horizontal bar)
+     Drop-in replacement for the original 320x134 RadioJar iframe.
+     Self-contained: no build step, no dependencies.
+     ========================================================================== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --brand-maroon: #832521;
+    --brand-red:    #a72020;
+    --brand-blue:   #3d90be;
+    --ink:          #f6f1ec;
+    --ink-dim:      rgba(246, 241, 236, 0.62);
+    --ink-faint:    rgba(246, 241, 236, 0.40);
+    --stroke:       rgba(255, 255, 255, 0.16);
+    --font-head:    'Poppins', system-ui, sans-serif;
+    --font-body:    'Montserrat', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: transparent; }
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .bar {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 13px;
+    border-radius: 16px;
+    border: 1px solid var(--stroke);
+    background:
+      radial-gradient(120% 160% at 0% 0%, rgba(167,32,32,0.55), transparent 60%),
+      radial-gradient(120% 160% at 100% 100%, rgba(61,144,190,0.38), transparent 60%),
+      linear-gradient(150deg, #4a1513 0%, #2a0e0d 65%, #1a0908 100%);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.42);
+    overflow: hidden;
+  }
+
+  /* play button */
+  .play {
+    position: relative;
+    width: 46px; height: 46px;
+    flex: 0 0 auto;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(145deg, var(--brand-red), var(--brand-maroon));
+    box-shadow: 0 7px 16px rgba(167,32,32,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
+    display: grid; place-items: center;
+    transition: transform 0.15s ease, filter 0.2s ease;
+  }
+  .play:hover { transform: translateY(-1px); filter: brightness(1.08); }
+  .play:active { transform: scale(0.95); }
+  .play:focus-visible { outline: 3px solid var(--brand-blue); outline-offset: 2px; }
+  .play svg { width: 20px; height: 20px; display: block; }
+  .play .ico-pause, .play .ico-load { display: none; }
+  .bar.is-playing .play .ico-play  { display: none; }
+  .bar.is-playing .play .ico-pause { display: block; }
+  .bar.is-loading .play .ico-play,
+  .bar.is-loading .play .ico-pause { display: none; }
+  .bar.is-loading .play .ico-load  { display: block; animation: spin 0.9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* text block */
+  .info { min-width: 0; flex: 1 1 auto; }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 2px;
+  }
+  .station {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .live {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex: 0 0 auto;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 8.5px;
+    letter-spacing: 0.8px;
+    color: var(--ink-dim);
+    background: rgba(0,0,0,0.28);
+    border: 1px solid var(--stroke);
+  }
+  .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); }
+  .bar.is-playing .live { color: #fff; background: rgba(167,32,32,0.4); }
+  .bar.is-playing .live .dot {
+    background: #ff5a4d;
+    box-shadow: 0 0 0 0 rgba(255,90,77,0.7);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,90,77,0.7); }
+    70%  { box-shadow: 0 0 0 6px rgba(255,90,77,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,90,77,0); }
+  }
+  .track {
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .track b { color: var(--ink); font-weight: 600; }
+
+  /* mute toggle */
+  .mute {
+    flex: 0 0 auto;
+    width: 30px; height: 30px;
+    display: grid; place-items: center;
+    border: none;
+    background: transparent;
+    color: var(--ink-dim);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .mute:hover { color: #fff; background: rgba(255,255,255,0.08); }
+  .mute:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 1px; }
+  .mute svg { width: 17px; height: 17px; display: block; }
+  .mute .ico-muted { display: none; }
+  .bar.is-muted .mute .ico-on    { display: none; }
+  .bar.is-muted .mute .ico-muted { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .live .dot, .play .ico-load { animation: none !important; }
+  }
+</style>
+</head>
+
+<body>
+  <div class="bar" id="bar" aria-label="Reproductor compacto de Radio Juan Calvino">
+    <button class="play" id="playBtn" type="button" aria-label="Reproducir">
+      <svg class="ico-play"  viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+      <svg class="ico-load"  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 9 9" opacity="0.9"/></svg>
+    </button>
+
+    <div class="info">
+      <div class="row">
+        <span class="station" id="stationName">Radio Juan Calvino</span>
+        <span class="live"><span class="dot"></span>EN VIVO</span>
+      </div>
+      <div class="track" id="track">Presiona play para escuchar</div>
+    </div>
+
+    <button class="mute" id="muteBtn" type="button" aria-label="Silenciar">
+      <svg class="ico-on"    viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 16.5 12z"/></svg>
+      <svg class="ico-muted" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm18.3-2.3-1.4-1.4L17 11.2 14.1 8.3l-1.4 1.4L15.6 12.6l-2.9 2.9 1.4 1.4L17 14l2.9 2.9 1.4-1.4L18.4 12.6z"/></svg>
+    </button>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ===================== CONFIG ===================== */
+    var CONFIG = {
+      streamUrl:   "https://stream.radiojar.com/usdyrun8zccwv",
+      metaUrl:     "https://www.radiojar.com/api/stations/usdyrun8zccwv/now_playing/",
+      pollMs:      15000,
+      stationName: "Radio Juan Calvino"
+    };
+    /* ================================================== */
+
+    var bar     = document.getElementById("bar");
+    var playBtn = document.getElementById("playBtn");
+    var muteBtn = document.getElementById("muteBtn");
+    var trackEl = document.getElementById("track");
+
+    var audio = new Audio();
+    audio.preload = "none";
+    audio.crossOrigin = "anonymous";
+    audio.volume = 0.85;
+
+    var lastKey = "";
+    var pollTimer = null;
+
+    function esc(s) { return (s == null ? "" : String(s)).trim(); }
+
+    function applyTrack(d) {
+      var title  = esc(d && d.title);
+      var artist = esc(d && d.artist);
+      var key = title + "|" + artist;
+      if (key === lastKey) return;
+      lastKey = key;
+      if (title) {
+        trackEl.innerHTML = "<b></b>" + (artist ? " · " : "");
+        trackEl.querySelector("b").textContent = title;
+        if (artist) trackEl.appendChild(document.createTextNode(artist));
+      } else {
+        trackEl.textContent = "Transmisión en vivo";
+      }
+    }
+
+    function fetchNowPlaying() {
+      fetch(CONFIG.metaUrl, { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d) applyTrack(d); })
+        .catch(function () {});
+    }
+    function startPolling() {
+      fetchNowPlaying();
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(fetchNowPlaying, CONFIG.pollMs);
+    }
+
+    function play() {
+      bar.classList.add("is-loading");
+      audio.src = CONFIG.streamUrl + (CONFIG.streamUrl.indexOf("?") > -1 ? "&" : "?") + "_=" + Date.now();
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () {
+        bar.classList.remove("is-loading", "is-playing");
+        playBtn.setAttribute("aria-label", "Reproducir");
+      });
+    }
+    function stop() {
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+      bar.classList.remove("is-playing", "is-loading");
+      playBtn.setAttribute("aria-label", "Reproducir");
+    }
+    function toggle() {
+      if (bar.classList.contains("is-playing") || bar.classList.contains("is-loading")) stop();
+      else play();
+    }
+
+    audio.addEventListener("playing", function () {
+      bar.classList.remove("is-loading");
+      bar.classList.add("is-playing");
+      playBtn.setAttribute("aria-label", "Pausar");
+    });
+    audio.addEventListener("waiting", function () { bar.classList.add("is-loading"); });
+    audio.addEventListener("error", function () {
+      if (!audio.src) return;
+      bar.classList.remove("is-loading", "is-playing");
+      playBtn.setAttribute("aria-label", "Reproducir");
+      trackEl.textContent = "Señal no disponible. Intenta de nuevo.";
+    });
+
+    function toggleMute() {
+      audio.muted = !audio.muted;
+      bar.classList.toggle("is-muted", audio.muted);
+      muteBtn.setAttribute("aria-label", audio.muted ? "Activar sonido" : "Silenciar");
+    }
+
+    playBtn.addEventListener("click", toggle);
+    muteBtn.addEventListener("click", toggleMute);
+    document.addEventListener("keydown", function (e) {
+      if (e.code === "Space") { e.preventDefault(); toggle(); }
+    });
+
+    document.getElementById("stationName").textContent = CONFIG.stationName;
+    startPolling();
+  })();
+  </script>
+</body>
+</html>
