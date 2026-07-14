@@ -34,7 +34,7 @@ Publish `index.html` (see [Deployment](#-deployment)) and drop this into any pag
 
 ```html
 <iframe
-  src="https://YOUR-HOST/radio-juan-calvino-widget/"
+  src="https://jmarti326.github.io/radio-juan-calvino-widget/"
   title="Radio Juan Calvino"
   style="border:0;width:100%;max-width:410px;height:250px;"
   scrolling="no" loading="lazy" allow="autoplay">
@@ -76,7 +76,7 @@ site automatically on every push to `main`.
 1. Push this repo to GitHub.
 2. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
 3. Your widget will be live at
-   `https://YOUR-USERNAME.github.io/radio-juan-calvino-widget/`.
+   `https://jmarti326.github.io/radio-juan-calvino-widget/`.
 
 > **Private repos:** GitHub Pages from a **private** repository requires a paid
 > plan (GitHub Pro/Team/Enterprise). If you're on Free, either make the repo
