@@ -34,9 +34,24 @@ Two ready-to-embed layouts are included:
 
 | File           | Layout                              | Recommended iframe size |
 |----------------|-------------------------------------|-------------------------|
+| `responsive.html` | **Fluid horizontal bar** — scales desktop→phone at a constant height; best for headers/footers | `width:100%` × `96–110` |
 | `index.html`   | Full card (large art + controls)    | ~`380–410` × `250`      |
 | `compact.html` | Slim horizontal bar (drop-in for the original 320×134 embed) | `320` × `120` |
 | `bold.html`    | Big album-art hero (art fills the card, play button centered) | ~`360` × `470` |
+
+**Recommended for the church site** — `responsive.html` fills the available width
+on desktop and gracefully collapses on phones (volume slider → mute button under
+440px, album art hidden under 320px). Because it keeps a constant height, one
+fluid iframe works everywhere:
+
+```html
+<iframe
+  src="https://jmarti326.github.io/radio-juan-calvino-widget/responsive.html"
+  title="Radio Juan Calvino"
+  style="border:0;width:100%;height:104px;display:block;"
+  scrolling="no" loading="lazy" allow="autoplay">
+</iframe>
+```
 
 Compact embed:
 
@@ -142,6 +157,7 @@ mixed-content warnings when embedded on an HTTPS page.
 ```
 radio-juan-calvino-widget/
 ├─ index.html                 # full-card widget (HTML + CSS + JS)
+├─ responsive.html            # fluid horizontal bar (desktop→phone)
 ├─ compact.html               # slim horizontal-bar variant (~320px)
 ├─ bold.html                  # big album-art hero variant
 ├─ embed-example.html         # copy-paste iframe snippets
