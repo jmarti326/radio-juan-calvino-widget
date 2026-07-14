@@ -36,6 +36,7 @@ Two ready-to-embed layouts are included:
 |----------------|-------------------------------------|-------------------------|
 | `index.html`   | Full card (large art + controls)    | ~`380–410` × `250`      |
 | `compact.html` | Slim horizontal bar (drop-in for the original 320×134 embed) | `320` × `120` |
+| `bold.html`    | Big album-art hero (art fills the card, play button centered) | ~`360` × `470` |
 
 Compact embed:
 
@@ -142,6 +143,7 @@ mixed-content warnings when embedded on an HTTPS page.
 radio-juan-calvino-widget/
 ├─ index.html                 # full-card widget (HTML + CSS + JS)
 ├─ compact.html               # slim horizontal-bar variant (~320px)
+├─ bold.html                  # big album-art hero variant
 ├─ embed-example.html         # copy-paste iframe snippets
 ├─ .gitignore
 ├─ .github/workflows/
